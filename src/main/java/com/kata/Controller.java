@@ -2,6 +2,9 @@ package com.kata;
 
 import java.util.List;
 
+import com.kata.entity.Account;
+import com.kata.entity.AccountStatement;
+
 /*
  * Control every possible operation
  */
@@ -21,6 +24,13 @@ public interface Controller {
      * @param amount
      */
     abstract void withdraw(final Account accFrom, final float amount);
+
+    /**
+     * get the balance of the account
+     * 
+     * @param acc
+     */
+    abstract int getBalance(final Account accFrom);
 
     /**
      * See all the AccountStatement linked to the account associated
