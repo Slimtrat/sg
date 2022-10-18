@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.kata.entity.Account;
+import com.kata.exception.MyException;
 
 /**
  * User stories

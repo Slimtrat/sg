@@ -5,8 +5,10 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.kata.entity.Account;
 import com.kata.entity.AccountStatement;
+import com.kata.exception.AccountFactoryException;
+import com.kata.factory.StatementFactory;
+import com.kata.factory.StatementFactoryImpl;
 
 public final class StatementFactoryTest {
     /**
@@ -14,11 +16,9 @@ public final class StatementFactoryTest {
      */
     @Test
     void testSave() {
-        final StatementFactory factory;
-
-        final Account account = new Account();
-        final AccountStatement stat = new AccountStatement(0, 0);
-        Assertions.assertDoesNotThrow(() -> factory.save(account, stat));
+        final StatementFactory factory = new StatementFactoryImpl();
+        final AccountStatement stat = new AccountStatement(ActionEnum.DEPOSIT, 5);
+        Assertions.assertDoesNotThrow(() -> factory.save(2, stat));
     }
 
     /**
@@ -26,15 +26,17 @@ public final class StatementFactoryTest {
      */
     @Test
     void testSave2Accounts() {
-        final StatementFactory factory;
+        final StatementFactory factory = new StatementFactoryImpl();
+        final AccountStatement stat = new AccountStatement(ActionEnum.WITHDRAW, 8);
 
-        final Account account = new Account();
-        final Account account2 = new Account();
+        Assertions.assertDoesNotThrow(() -> factory.save(1, stat));
+        Assertions.assertDoesNotThrow(() -> factory.save(3, stat));
+        try {
+            Assertions.assertEquals(1, factory.show(1).size());
+        } catch (final AccountFactoryException e) {
+            Assertions.fail(e);
+        }
 
-        final AccountStatement stat = new AccountStatement(0, 0);
-
-        Assertions.assertDoesNotThrow(() -> factory.save(account, stat));
-        Assertions.assertDoesNotThrow(() -> factory.save(account2, stat));
     }
 
     /**
@@ -42,15 +44,17 @@ public final class StatementFactoryTest {
      */
     @Test
     void testShow() {
-        final StatementFactory factory;
-
-        final Account account = new Account();
-        final AccountStatement stat = new AccountStatement(0, 0);
-        factory.save(account, stat);
-        final AccountStatement stat2 = new AccountStatement(5, 4);
-        factory.save(account, stat2);
-
-        final List<AccountStatement> stats = factory.show(account);
-        Assertions.assertEquals(2, stats.size());
+        final int accId = 5;
+        final StatementFactory factory = new StatementFactoryImpl();
+        final AccountStatement stat2 = new AccountStatement(ActionEnum.CREATE);
+        final AccountStatement stat = new AccountStatement(ActionEnum.DEPOSIT, 8);
+        factory.save(accId, stat);
+        factory.save(accId, stat2);
+        try {
+            final List<AccountStatement> stats = factory.show(accId);
+            Assertions.assertEquals(2, stats.size());
+        } catch (final AccountFactoryException e) {
+            Assertions.fail(e);
+        }
     }
 }
