@@ -1,9 +1,13 @@
 package com.kata;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.kata.entity.AccountStatement;
 import com.kata.exception.ControllerException;
 import com.kata.factory.AccountFactory;
 import com.kata.factory.AccountFactoryImpl;
@@ -86,5 +90,42 @@ public final class ControllerTest {
         final String accIdUnknown = "Unknown";
         final int amountWithDraw = 50;
         Assertions.assertThrows(ControllerException.class, () -> controller.deposit(accIdUnknown, amountWithDraw));
+    }
+
+    @Test
+    public final void accountStatementUnknownAccount() {
+        final String accIdUnknown = "Unknown";
+        Assertions.assertThrows(ControllerException.class, () -> controller.accountStatement(accIdUnknown));
+    }
+
+    @Test
+    public final void accountStatementCreateToString() {
+        try {
+            final Pattern patternCreate = Pattern.compile("\\[.*\\] CREATE OK");
+            final String guid = controller.createAccount();
+            final List<AccountStatement> stats = controller.accountStatement(guid);
+            Assertions.assertEquals(1, stats.size());
+            Assertions.assertTrue(patternCreate.matcher(stats.get(0).toString()).find());
+        } catch (final ControllerException e) {
+            Assertions.fail(e);
+        }
+    }
+
+    @Test
+    public final void accountStatementCreateAndDepositToString() {
+        try {
+            final int moneyToDeposit = 5;
+            final Pattern patternCreate = Pattern.compile("\\[.*\\] CREATE OK");
+            final Pattern patternDeposit = Pattern.compile("\\[.*\\] DEPOSIT OK of " + 5);
+
+            final String guid = controller.createAccount();
+            controller.deposit(guid, moneyToDeposit);
+            final List<AccountStatement> stats = controller.accountStatement(guid);
+            Assertions.assertEquals(2, stats.size());
+            Assertions.assertTrue(patternCreate.matcher(stats.get(0).toString()).find());
+            Assertions.assertTrue(patternDeposit.matcher(stats.get(1).toString()).find());
+        } catch (final ControllerException e) {
+            Assertions.fail(e);
+        }
     }
 }

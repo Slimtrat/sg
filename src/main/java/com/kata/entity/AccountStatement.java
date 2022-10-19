@@ -10,7 +10,7 @@ import com.kata.ActionEnum;
  */
 public final class AccountStatement {
     private static final String T_STRING = "[%s] %s %s";
-    private static final String T_STRING_AMOUNT = "[%s] %s %s of %d";
+    private static final String T_STRING_AMOUNT = "[%s] %s %s of %f";
 
     private final Calendar cal = Calendar.getInstance();
     private final Date date;

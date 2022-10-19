@@ -11,6 +11,28 @@ import com.kata.exception.MyException;
  */
 public final class AccountTest {
     /**
+     * Test equals
+     */
+    @Test
+    void testEqualsWrongGuid() {
+        final Account account = new Account();
+        final Account account2 = new Account();
+        // guid forcement different
+        Assertions.assertNotEquals(account, account2);
+    }
+
+    /**
+     * Test equals
+     */
+    @Test
+    void testNotEqualsWrongType() {
+        final Account account = new Account();
+        final int wrongType = 0;
+        // guid forcement different
+        Assertions.assertNotEquals(account, wrongType);
+    }
+
+    /**
      * Test deposit
      */
     @Test
