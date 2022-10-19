@@ -18,14 +18,14 @@ public final class AccountFactoryImpl implements AccountFactory {
     }
 
     @Override
-    public final int createAccount() {
+    public final String createAccount() {
         final Account account = new Account(); // would create an new account with 0 balance
         bank.add(account);
         return account.getId();
     }
 
     @Override
-    public final Optional<Account> findAccount(final int id) {
+    public final Optional<Account> findAccount(final String id) {
         return bank//
                 .stream()//
                 .filter(acc -> acc.getId() == id)//

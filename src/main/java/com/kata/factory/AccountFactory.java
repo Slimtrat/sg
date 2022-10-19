@@ -11,7 +11,7 @@ public interface AccountFactory {
      * 
      * @return
      */
-    public abstract int createAccount() throws AccountFactoryException;
+    public abstract String createAccount() throws AccountFactoryException;
 
     /**
      * find an account with its id
@@ -19,7 +19,7 @@ public interface AccountFactory {
      * @param id
      * @return
      */
-    public abstract Optional<Account> findAccount(final int id) throws AccountFactoryException;
+    public abstract Optional<Account> findAccount(final String id) throws AccountFactoryException;
 
     public abstract void update(Account account) throws AccountFactoryException;
 

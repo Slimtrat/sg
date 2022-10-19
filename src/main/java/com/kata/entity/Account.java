@@ -1,6 +1,6 @@
 package com.kata.entity;
 
-import java.util.concurrent.atomic.LongAdder;
+import java.util.UUID;
 
 import com.kata.exception.MyException;
 
@@ -8,13 +8,11 @@ import com.kata.exception.MyException;
  * Represent any account 
  */
 public final class Account {
-    private static final LongAdder NB_ACCOUNT = new LongAdder();
-    private final int id;
+    private final String guid;
     private float balance;
 
     public Account() {
-        NB_ACCOUNT.increment();
-        this.id = NB_ACCOUNT.intValue();
+        this.guid = UUID.randomUUID().toString();
         this.balance = 0;
     }
 
@@ -50,10 +48,10 @@ public final class Account {
      */
     @Override
     public final boolean equals(Object obj) {
-        return (obj instanceof Account) && ((Account) obj).id == this.id;
+        return (obj instanceof Account) && ((Account) obj).guid == this.guid;
     }
 
-    public final int getId() {
-        return this.id;
+    public final String getId() {
+        return this.guid;
     }
 }

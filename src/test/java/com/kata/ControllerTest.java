@@ -13,19 +13,20 @@ import com.kata.factory.StatementFactoryImpl;
 public final class ControllerTest {
     private StatementFactory statFactory;
     private AccountFactory accFactory;
+    private Controller controller;
 
     @BeforeEach
     public final void initFactory() {
         statFactory = new StatementFactoryImpl();
         accFactory = new AccountFactoryImpl();
+        controller = new ControllerImpl(statFactory, accFactory);
     }
 
     @Test
     public final void depositTest() {
         final int amountDeposit = 10;
-        final Controller controller = new ControllerImpl(statFactory, accFactory);
         try {
-            final int accId = controller.createAccount();
+            final String accId = controller.createAccount();
             Assertions.assertDoesNotThrow(() -> controller.deposit(accId, amountDeposit));
             Assertions.assertEquals(amountDeposit, controller.getBalance(accId));
             Assertions.assertEquals(3, controller.accountStatement(accId).size()); // Create, deposit and show
@@ -38,9 +39,8 @@ public final class ControllerTest {
     public final void withDrawNormalTest() {
         final int amountDeposit = 10;
         final int amountWithDraw = 5;
-        final Controller controller = new ControllerImpl(statFactory, accFactory);
         try {
-            final int accId = controller.createAccount();
+            final String accId = controller.createAccount();
             Assertions.assertDoesNotThrow(() -> controller.deposit(accId, amountDeposit));
             Assertions.assertDoesNotThrow(() -> controller.withdraw(accId, amountWithDraw));
             Assertions.assertEquals(amountDeposit - amountWithDraw, controller.getBalance(accId));
@@ -57,9 +57,8 @@ public final class ControllerTest {
     public final void withDrawExcessiveTest() {
         final int amountDeposit = 10;
         final int amountWithDraw = 50;
-        final Controller controller = new ControllerImpl(statFactory, accFactory);
         try {
-            final int accId = controller.createAccount();
+            final String accId = controller.createAccount();
             Assertions.assertDoesNotThrow(() -> controller.deposit(accId, amountDeposit));
             Assertions.assertThrows(ControllerException.class, () -> controller.withdraw(accId, amountWithDraw));
             Assertions.assertEquals(amountDeposit, controller.getBalance(accId));
@@ -67,5 +66,25 @@ public final class ControllerTest {
         } catch (final ControllerException e) {
             Assertions.fail(e);
         }
+    }
+
+    @Test
+    public final void withDrawWithUnknownAccount() {
+        final String accIdUnknown = "Unknown";
+        final int amountWithDraw = 50;
+        Assertions.assertThrows(ControllerException.class, () -> controller.withdraw(accIdUnknown, amountWithDraw));
+    }
+
+    @Test
+    public final void getBalanceWithUnknownAccount() {
+        final String accIdUnknown = "Unknown";
+        Assertions.assertThrows(ControllerException.class, () -> controller.getBalance(accIdUnknown));
+    }
+
+    @Test
+    public final void depositWithUnknownAccount() {
+        final String accIdUnknown = "Unknown";
+        final int amountWithDraw = 50;
+        Assertions.assertThrows(ControllerException.class, () -> controller.deposit(accIdUnknown, amountWithDraw));
     }
 }
