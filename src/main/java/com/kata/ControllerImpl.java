@@ -2,6 +2,7 @@ package com.kata;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.kata.entity.Account;
 import com.kata.entity.AccountStatement;
@@ -15,6 +16,7 @@ import com.kata.factory.StatementFactory;
 public final class ControllerImpl implements Controller {
     private final StatementFactory factory;
     private final AccountFactory accountFactory;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public ControllerImpl(final StatementFactory factory, final AccountFactory accountFactory) {
         this.factory = factory;
@@ -24,6 +26,7 @@ public final class ControllerImpl implements Controller {
     @Override
     public final void deposit(final String accId, final float amount) throws ControllerException {
         final AccountStatement statement = new AccountStatement(ActionEnum.DEPOSIT, amount);
+        lock.lock();// permits to ensure threadSafe when using update
         try {
             final Account account = checkAccount(accId);
             account.deposit(amount);
@@ -33,12 +36,14 @@ public final class ControllerImpl implements Controller {
             throw new ControllerException(e.getMessage());
         } finally {
             factory.save(accId, statement);
+            lock.unlock();
         }
     }
 
     @Override
     public final void withdraw(final String accFrom, final float amount) throws ControllerException {
         final AccountStatement statement = new AccountStatement(ActionEnum.WITHDRAW, amount);
+        lock.lock(); // permits to ensure threadSafe when using update
         try {
             final Account account = checkAccount(accFrom);
             account.withdraw(amount);
@@ -48,6 +53,7 @@ public final class ControllerImpl implements Controller {
             throw new ControllerException(e.getMessage());
         } finally {
             factory.save(accFrom, statement);
+            lock.unlock();
         }
     }
 

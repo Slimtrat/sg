@@ -1,6 +1,9 @@
 package com.kata;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Assertions;
@@ -131,6 +134,73 @@ public final class ControllerTest {
             Assertions.assertTrue(patternCreate.matcher(stats.get(0).toString()).find());
             Assertions.assertTrue(patternDeposit.matcher(stats.get(1).toString()).find());
         } catch (final ControllerException e) {
+            Assertions.fail(e);
+        }
+    }
+
+    /**
+     * Hard deposit could make you more poor caused by concurrency on entity
+     */
+    @Test
+    public final void threadSafeDeposit() {
+        try {
+            final int moneyToDeposit = 5;
+            final int nbOfTimeToDeposit = 10000;
+            final String guid = controller.createAccount();
+
+            final ExecutorService executor = Executors.newFixedThreadPool(100); // 100 thread parallele
+            final LongAdder adder = new LongAdder();
+            for (int i = 0; i < nbOfTimeToDeposit; i++) {
+                executor.execute(() -> {
+                    try {
+                        controller.deposit(guid, moneyToDeposit);
+                    } catch (final ControllerException e) {
+                        Assertions.fail(e);
+                    } finally {
+                        adder.increment();
+                    }
+                });
+            }
+            while (adder.sum() != nbOfTimeToDeposit) {
+                System.out.println("waiting ..");
+                Thread.sleep(1);
+            }
+            Assertions.assertEquals(nbOfTimeToDeposit * moneyToDeposit, controller.getBalance(guid));
+        } catch (final ControllerException | InterruptedException e) {
+            Assertions.fail(e);
+        }
+    }
+
+    /**
+     * Hard withdraw could make you more rich caused by concurrency on entity
+     */
+    @Test
+    public final void threadSafeWithdraw() {
+        try {
+            final int moneyToWidthDraw = 5;
+            final int nbOfTimeToDeposit = 10000;
+            final String guid = controller.createAccount();
+            controller.deposit(guid, nbOfTimeToDeposit * moneyToWidthDraw);
+
+            final ExecutorService executor = Executors.newFixedThreadPool(100); // 100 thread parallele
+            final LongAdder adder = new LongAdder();
+            for (int i = 0; i < nbOfTimeToDeposit; i++) {
+                executor.execute(() -> {
+                    try {
+                        controller.withdraw(guid, moneyToWidthDraw);
+                    } catch (final ControllerException e) {
+                        Assertions.fail(e);
+                    } finally {
+                        adder.increment();
+                    }
+                });
+            }
+            while (adder.sum() != nbOfTimeToDeposit) {
+                System.out.println("waiting ..");
+                Thread.sleep(1);
+            }
+            Assertions.assertEquals(0, controller.getBalance(guid));
+        } catch (final ControllerException | InterruptedException e) {
             Assertions.fail(e);
         }
     }
