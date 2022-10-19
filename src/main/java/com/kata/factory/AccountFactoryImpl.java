@@ -28,7 +28,7 @@ public final class AccountFactoryImpl implements AccountFactory {
     public final Optional<Account> findAccount(final String id) {
         return bank//
                 .stream()//
-                .filter(acc -> acc.getId() == id)//
+                .filter(acc -> id.equals(acc.getId()))//
                 .findAny();
     }
 
@@ -36,7 +36,7 @@ public final class AccountFactoryImpl implements AccountFactory {
     public final void update(final Account account) {
         bank//
                 .stream()//
-                .filter(acc -> acc.getId() == account.getId())//
+                .filter(acc -> account.getId().equals(acc.getId()))//
                 .forEach(acc -> account.setBalance(account.getBalance()));
     }
 }

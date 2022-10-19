@@ -21,6 +21,11 @@ public interface AccountFactory {
      */
     public abstract Optional<Account> findAccount(final String id) throws AccountFactoryException;
 
+    /**
+     * MUST be used THREADSAFE
+     * 
+     * @param account
+     * @throws AccountFactoryException
+     */
     public abstract void update(Account account) throws AccountFactoryException;
-
 }
