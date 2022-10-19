@@ -1,33 +1,32 @@
 package com.kata;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.locks.ReentrantLock;
 
-import com.kata.entity.Account;
-import com.kata.entity.AccountStatement;
 import com.kata.exception.AccountFactoryException;
 import com.kata.exception.ControllerException;
 import com.kata.exception.MyException;
 import com.kata.exception.StatementFactoryException;
 import com.kata.factory.AccountFactory;
 import com.kata.factory.StatementFactory;
+import com.kata.models.Account;
+import com.kata.models.AccountStatement;
 
 public final class ControllerImpl implements Controller {
     private final StatementFactory factory;
     private final AccountFactory accountFactory;
-    private final ReentrantLock lock = new ReentrantLock();
+    private final ConcurrentModelLocker<String> locks;
 
     public ControllerImpl(final StatementFactory factory, final AccountFactory accountFactory) {
         this.factory = factory;
         this.accountFactory = accountFactory;
+        this.locks = new ConcurrentModelLocker<>();
     }
 
     @Override
     public final void deposit(final String accId, final float amount) throws ControllerException {
         final AccountStatement statement = new AccountStatement(ActionEnum.DEPOSIT, amount);
-        lock.lock();// permits to ensure threadSafe when using update
         try {
+            locks.lockEntity(accId);
             final Account account = checkAccount(accId);
             account.deposit(amount);
             accountFactory.update(account);
@@ -35,16 +34,16 @@ public final class ControllerImpl implements Controller {
             statement.hasFail();
             throw new ControllerException(e.getMessage());
         } finally {
+            locks.unlockEntity(accId);
             factory.save(accId, statement);
-            lock.unlock();
         }
     }
 
     @Override
     public final void withdraw(final String accFrom, final float amount) throws ControllerException {
         final AccountStatement statement = new AccountStatement(ActionEnum.WITHDRAW, amount);
-        lock.lock(); // permits to ensure threadSafe when using update
         try {
+            locks.lockEntity(accFrom);
             final Account account = checkAccount(accFrom);
             account.withdraw(amount);
             accountFactory.update(account);
@@ -52,8 +51,8 @@ public final class ControllerImpl implements Controller {
             statement.hasFail();
             throw new ControllerException(e.getMessage());
         } finally {
+            locks.unlockEntity(accFrom);
             factory.save(accFrom, statement);
-            lock.unlock();
         }
     }
 
@@ -93,10 +92,7 @@ public final class ControllerImpl implements Controller {
     }
 
     private final Account checkAccount(final String accId) throws AccountFactoryException {
-        final Optional<Account> accountOpt = accountFactory.findAccount(accId);
-        if (!accountOpt.isPresent()) {
-            throw new AccountFactoryException("Cannot find this account");
-        }
-        return accountOpt.get();
+        return accountFactory.findAccount(accId)//
+                .orElseThrow(() -> new AccountFactoryException("Cannot find this account"));
     }
 }

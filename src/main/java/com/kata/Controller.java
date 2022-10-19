@@ -2,8 +2,8 @@ package com.kata;
 
 import java.util.List;
 
-import com.kata.entity.AccountStatement;
 import com.kata.exception.ControllerException;
+import com.kata.models.AccountStatement;
 
 /*
  * Control every possible operation

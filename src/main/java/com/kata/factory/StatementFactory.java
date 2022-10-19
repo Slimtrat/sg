@@ -2,8 +2,8 @@ package com.kata.factory;
 
 import java.util.List;
 
-import com.kata.entity.AccountStatement;
 import com.kata.exception.StatementFactoryException;
+import com.kata.models.AccountStatement;
 
 /*
  * Here to represent action memory used in the project

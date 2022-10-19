@@ -2,8 +2,8 @@ package com.kata.factory;
 
 import java.util.Optional;
 
-import com.kata.entity.Account;
 import com.kata.exception.AccountFactoryException;
+import com.kata.models.Account;
 
 public interface AccountFactory {
     /**

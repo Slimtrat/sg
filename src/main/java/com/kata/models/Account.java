@@ -1,4 +1,4 @@
-package com.kata.entity;
+package com.kata.models;
 
 import java.util.UUID;
 

@@ -3,15 +3,15 @@ package com.kata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.kata.entity.Account;
 import com.kata.exception.MyException;
+import com.kata.models.Account;
 
 public final class AccountTest {
     /**
      * Test equals
      */
     @Test
-    void testEqualsWrongGuid() {
+    void should_not_equals_when_different_guid() {
         final Account account = new Account();
         final Account account2 = new Account();
         // guid forcement different
@@ -22,7 +22,7 @@ public final class AccountTest {
      * Test equals
      */
     @Test
-    void testNotEqualsWrongType() {
+    void should_not_equals_when_wrong_type() {
         final Account account = new Account();
         final int wrongType = 0;
         // guid forcement different
@@ -33,7 +33,7 @@ public final class AccountTest {
      * Test deposit
      */
     @Test
-    void testDeposit() {
+    void should_deposit() {
         final float ammountToDeposit = 5;
 
         final Account account = new Account();
@@ -46,7 +46,7 @@ public final class AccountTest {
      * Test normal withDraw
      */
     @Test
-    void testWithdraw() {
+    void should_withdraw() {
         final float ammountToDeposit = 5;
         final float ammountToWithdraw = 2;
 
@@ -62,7 +62,7 @@ public final class AccountTest {
      * Test anormal withDraw
      */
     @Test
-    void testWithdrawExcessive() {
+    void should_not_widthdraw_when_excessive_amount() {
         final float ammountToDeposit = 5;
         final float ammountToWithdraw = 6;
 

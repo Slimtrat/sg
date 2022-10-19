@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.kata.entity.AccountStatement;
 import com.kata.exception.ControllerException;
 import com.kata.factory.AccountFactory;
 import com.kata.factory.AccountFactoryImpl;
 import com.kata.factory.StatementFactory;
 import com.kata.factory.StatementFactoryImpl;
+import com.kata.models.AccountStatement;
 
 public final class ControllerTest {
     private StatementFactory statFactory;
@@ -30,7 +30,7 @@ public final class ControllerTest {
     }
 
     @Test
-    public final void depositTest() {
+    public final void should_deposit() {
         final int amountDeposit = 10;
         try {
             final String accId = controller.createAccount();
@@ -43,7 +43,7 @@ public final class ControllerTest {
     }
 
     @Test
-    public final void withDrawNormalTest() {
+    public final void should_withdraw() {
         final int amountDeposit = 10;
         final int amountWithDraw = 5;
         try {
@@ -61,7 +61,7 @@ public final class ControllerTest {
      * It could be cool but bank won't
      */
     @Test
-    public final void withDrawExcessiveTest() {
+    public final void should_not_withdraw_when_excessive_amount() {
         final int amountDeposit = 10;
         final int amountWithDraw = 50;
         try {
@@ -76,27 +76,27 @@ public final class ControllerTest {
     }
 
     @Test
-    public final void withDrawWithUnknownAccount() {
+    public final void should_not_withdraw_when_unknown_account() {
         final String accIdUnknown = "Unknown";
         final int amountWithDraw = 50;
         Assertions.assertThrows(ControllerException.class, () -> controller.withdraw(accIdUnknown, amountWithDraw));
     }
 
     @Test
-    public final void getBalanceWithUnknownAccount() {
+    public final void should_not_getBalance_when_unknown_amount() {
         final String accIdUnknown = "Unknown";
         Assertions.assertThrows(ControllerException.class, () -> controller.getBalance(accIdUnknown));
     }
 
     @Test
-    public final void depositWithUnknownAccount() {
+    public final void should_not_deposit_when_unknown_amount() {
         final String accIdUnknown = "Unknown";
         final int amountWithDraw = 50;
         Assertions.assertThrows(ControllerException.class, () -> controller.deposit(accIdUnknown, amountWithDraw));
     }
 
     @Test
-    public final void accountStatementUnknownAccount() {
+    public final void should_not_accountStatement_when_unknown_amount() {
         final String accIdUnknown = "Unknown";
         Assertions.assertThrows(ControllerException.class, () -> controller.accountStatement(accIdUnknown));
     }
@@ -105,7 +105,7 @@ public final class ControllerTest {
      * Could also be in the statement factory test
      */
     @Test
-    public final void accountStatementCreateToString() {
+    public final void should_accountStatement_with_pretty_formatter_for_create() {
         try {
             final Pattern patternCreate = Pattern.compile("\\[.*\\] CREATE OK");
             final String guid = controller.createAccount();
@@ -121,7 +121,7 @@ public final class ControllerTest {
      * Could also be in the statement factory test
      */
     @Test
-    public final void accountStatementCreateAndDepositToString() {
+    public final void should_accountStatement_with_pretty_formatter_for_create_and_deposit() {
         try {
             final int moneyToDeposit = 5;
             final Pattern patternCreate = Pattern.compile("\\[.*\\] CREATE OK");
@@ -142,10 +142,10 @@ public final class ControllerTest {
      * Hard deposit could make you more poor caused by concurrency on entity
      */
     @Test
-    public final void threadSafeDeposit() {
+    public final void should_deposit_multiple_time_and_have_the_right_balance() {
         try {
             final int moneyToDeposit = 5;
-            final int nbOfTimeToDeposit = 10000;
+            final int nbOfTimeToDeposit = 100000;
             final String guid = controller.createAccount();
 
             final ExecutorService executor = Executors.newFixedThreadPool(100); // 100 thread parallele
@@ -175,10 +175,10 @@ public final class ControllerTest {
      * Hard withdraw could make you more rich caused by concurrency on entity
      */
     @Test
-    public final void threadSafeWithdraw() {
+    public final void should_withdraw_multiple_time_and_have_the_right_balance() {
         try {
             final int moneyToWidthDraw = 5;
-            final int nbOfTimeToDeposit = 10000;
+            final int nbOfTimeToDeposit = 100000;
             final String guid = controller.createAccount();
             controller.deposit(guid, nbOfTimeToDeposit * moneyToWidthDraw);
 

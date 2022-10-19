@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.kata.entity.AccountStatement;
 import com.kata.exception.StatementFactoryException;
+import com.kata.models.AccountStatement;
 
 /**
  * Responsible for managing statement storage

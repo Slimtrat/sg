@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import com.kata.entity.Account;
+import com.kata.models.Account;
 
 /**
  * Here, we will stored in memory, but could be in database
