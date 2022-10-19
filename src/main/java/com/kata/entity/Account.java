@@ -47,7 +47,7 @@ public final class Account {
      * compare the id
      */
     @Override
-    public final boolean equals(Object obj) {
+    public final boolean equals(final Object obj) {
         return (obj instanceof Account) && ((Account) obj).guid == this.guid;
     }
 

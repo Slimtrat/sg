@@ -98,6 +98,9 @@ public final class ControllerTest {
         Assertions.assertThrows(ControllerException.class, () -> controller.accountStatement(accIdUnknown));
     }
 
+    /**
+     * Could also be in the statement factory test
+     */
     @Test
     public final void accountStatementCreateToString() {
         try {
@@ -111,6 +114,9 @@ public final class ControllerTest {
         }
     }
 
+    /**
+     * Could also be in the statement factory test
+     */
     @Test
     public final void accountStatementCreateAndDepositToString() {
         try {

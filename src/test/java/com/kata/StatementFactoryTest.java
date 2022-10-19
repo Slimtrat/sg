@@ -15,7 +15,7 @@ public final class StatementFactoryTest {
     private StatementFactory factory;
 
     @BeforeEach
-    public void initFactory() {
+    public final void initFactory() {
         factory = new StatementFactoryImpl();
     }
 
@@ -23,7 +23,7 @@ public final class StatementFactoryTest {
      * Test normal save in factory
      */
     @Test
-    void testSave() {
+    public final void testSave() {
         final AccountStatement stat = new AccountStatement(ActionEnum.DEPOSIT, 5);
         Assertions.assertDoesNotThrow(() -> factory.save("2", stat));
     }
@@ -32,7 +32,7 @@ public final class StatementFactoryTest {
      * Test normal save in factory with 2 accounts
      */
     @Test
-    void testSave2Accounts() {
+    public final void testSave2Accounts() {
         final AccountStatement stat = new AccountStatement(ActionEnum.WITHDRAW, 8);
         Assertions.assertDoesNotThrow(() -> factory.save("1", stat));
         Assertions.assertDoesNotThrow(() -> factory.save("3", stat));
@@ -48,7 +48,7 @@ public final class StatementFactoryTest {
      * Test showing simple with only one account
      */
     @Test
-    void testShow() {
+    public final void testShow() {
         final String accId = "5";
         final AccountStatement stat2 = new AccountStatement(ActionEnum.CREATE);
         final AccountStatement stat = new AccountStatement(ActionEnum.DEPOSIT, 8);
@@ -66,7 +66,7 @@ public final class StatementFactoryTest {
      * Test showing simple with only one account
      */
     @Test
-    void testShowUnknown() {
+    public final void testShowUnknown() {
         final String accId = "5";
         Assertions.assertThrows(StatementFactoryException.class, () -> factory.show(accId));
     }

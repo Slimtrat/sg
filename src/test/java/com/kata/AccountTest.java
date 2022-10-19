@@ -6,9 +6,6 @@ import org.junit.jupiter.api.Test;
 import com.kata.entity.Account;
 import com.kata.exception.MyException;
 
-/**
- * User stories
- */
 public final class AccountTest {
     /**
      * Test equals
